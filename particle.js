@@ -9,5 +9,7 @@ class Particle
             x: velx,
             y: vely
         }
+        this.radius = 1
+        this.mass = 1
     }
 }
