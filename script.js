@@ -23,19 +23,19 @@ Engine.run(engine);
 // Step 3: Create fluid particles
 const particles = [];
 const numParticles = 1000;
-const particleRadius = 5;
+const particleRadius = 25;
 
 //for each particle
 for (let i = 0; i < numParticles; i++) {
     //set x,y pos within window boundry
-    let x = window.innerWidth / 2 + Math.random() * 100 - 50;
-    let y = window.innerHeight / 4 + Math.random() * 100 - 50;
+    let x = window.innerWidth / 2 + Math.random() * 150 - 50;
+    let y = window.innerHeight / 4 + Math.random() * 150 - 50;
     
     //make a matter object
     let particle = Bodies.circle(x, y, particleRadius, {
         friction: 0.05,
-        restitution: 0.1, // Bounciness (reducing makes fluid-like)
-        density: 0.0005,
+        restitution: 0.0000001, // Bounciness (reducing makes fluid-like)
+        density: 0.01,
         render: { fillStyle: 'blue' }
     });
 
@@ -46,9 +46,17 @@ for (let i = 0; i < numParticles; i++) {
 
 // Step 4: Create container walls
 const boundaries = [
-    Bodies.rectangle(window.innerWidth / 2, window.innerHeight, window.innerWidth, 20, { isStatic: true }), // Floor
-    Bodies.rectangle(0, window.innerHeight / 2, 20, window.innerHeight, { isStatic: true }), // Left wall
-    Bodies.rectangle(window.innerWidth, window.innerHeight / 2, 20, window.innerHeight, { isStatic: true }) // Right wall
+    // Floor
+    Bodies.rectangle(window.innerWidth / 2, window.innerHeight, window.innerWidth, 30, { isStatic: true }),
+    
+    // Left wall
+    Bodies.rectangle(0, window.innerHeight / 2, 30, window.innerHeight, { isStatic: true }),
+    
+    // Right wall
+    Bodies.rectangle(window.innerWidth, window.innerHeight / 2, 30, window.innerHeight, { isStatic: true }),
+    
+    // Ceiling
+    Bodies.rectangle(window.innerWidth / 2, 0, window.innerWidth, 30, { isStatic: true })
 ];
 // add them to the world
 World.add(world, boundaries);
@@ -93,3 +101,19 @@ function update() { //each frame
 }
 
 update();// run simulation
+
+document.addEventListener("mousemove", (event) => {//waits for movement
+    let mousePos = { x: event.clientX, y: event.clientY }; // documents position
+
+    for (let p of particles) {// for all particles
+        let distance = Matter.Vector.magnitude(Matter.Vector.sub(p.position, mousePos));
+        //find distance to mouse
+
+
+        if (distance < 150) {// only within range
+            let push = Matter.Vector.sub(p.position, mousePos);//creates a vector
+            let force = Matter.Vector.normalise(push); //disregard distance, magnitude only
+            Body.applyForce(p, p.position, Matter.Vector.mult(force, 1));// apply the force
+        }
+    }
+});
