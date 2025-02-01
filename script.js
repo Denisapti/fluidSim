@@ -62,7 +62,7 @@ const boundaries = [
 World.add(world, boundaries);
 
 function applyFluidForces() {
-    let radius = particleRadius * 3; // Interaction range for fluid effect
+    let radius = particleRadius * 1.2; // Interaction range for fluid effect
 
     // for every particle
     for (let p1 of particles) {
